@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import CodeGenerator from "./pages/CodeGenerator";
 import AIResearcher from "./pages/AIResearcher";
+import Documentation from "./pages/Documentation";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/code-generator" element={<CodeGenerator />} />
               <Route path="/researcher" element={<AIResearcher />} />
+              <Route path="/docs" element={<Documentation />} />
             </Routes>
           </main>
         </div>
