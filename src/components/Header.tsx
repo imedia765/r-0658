@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Code, Brain, Home, BarChart } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useProject } from '@/contexts/ProjectContext';
 
 const Header = () => {
   const location = useLocation();
+  const { selectedProject, setSelectedProject, projects } = useProject();
 
   const isActive = (path: string) => {
     return location.pathname === path ? 'bg-accent/20' : '';
@@ -18,6 +21,24 @@ const Header = () => {
               R2-D2 AI Dev Suite
             </span>
           </Link>
+          <Select 
+            value={selectedProject.id} 
+            onValueChange={(value) => {
+              const project = projects.find(p => p.id === value);
+              if (project) setSelectedProject(project);
+            }}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select Project" />
+            </SelectTrigger>
+            <SelectContent>
+              {projects.map((project) => (
+                <SelectItem key={project.id} value={project.id}>
+                  {project.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <nav className="flex items-center space-x-6 text-sm font-medium">
           <Link

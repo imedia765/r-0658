@@ -1,22 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Brain, Database, Search, Code, GitBranch } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { useProject } from '@/contexts/ProjectContext';
 
 const AIResearcher = () => {
   const { toast } = useToast();
-  const [selectedProject, setSelectedProject] = useState('current');
-
-  // Mock projects data - in a real app, this would come from your backend
-  const projects = [
-    { id: 'current', name: 'Current Project' },
-    { id: 'project-1', name: 'E-commerce App' },
-    { id: 'project-2', name: 'Blog Platform' },
-  ];
+  const { selectedProject } = useProject();
 
   const projectTools = {
     'current': [
@@ -57,32 +50,20 @@ const AIResearcher = () => {
   const handleAnalyze = () => {
     toast({
       title: "Analysis Started",
-      description: "AI is analyzing the selected project's codebase...",
+      description: `AI is analyzing ${selectedProject.name}'s codebase...`,
     });
   };
 
-  const currentTools = projectTools[selectedProject as keyof typeof projectTools] || projectTools.current;
-  const currentDatasets = projectDatasets[selectedProject as keyof typeof projectDatasets] || projectDatasets.current;
+  const currentTools = projectTools[selectedProject.id as keyof typeof projectTools] || projectTools.current;
+  const currentDatasets = projectDatasets[selectedProject.id as keyof typeof projectDatasets] || projectDatasets.current;
 
   return (
     <div className="container mx-auto p-6">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-          AI Research Tools
+          AI Research Tools - {selectedProject.name}
         </h1>
         <div className="flex items-center gap-4">
-          <Select value={selectedProject} onValueChange={setSelectedProject}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select Project" />
-            </SelectTrigger>
-            <SelectContent>
-              {projects.map((project) => (
-                <SelectItem key={project.id} value={project.id}>
-                  {project.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Button onClick={handleAnalyze} className="flex items-center gap-2">
             <Code className="h-4 w-4" />
             Analyze Project
