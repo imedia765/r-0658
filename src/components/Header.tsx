@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Code, Brain, Home } from 'lucide-react';
+import { Code, Brain, Home, BarChart } from 'lucide-react';
 
 const Header = () => {
   const location = useLocation();
@@ -40,6 +40,13 @@ const Header = () => {
           >
             <Brain className="h-4 w-4" />
             <span>AI Researcher</span>
+          </Link>
+          <Link
+            to="/analytics"
+            className={`flex items-center space-x-2 transition-colors hover:text-foreground/80 px-3 py-2 rounded-md ${isActive('/analytics')}`}
+          >
+            <BarChart className="h-4 w-4" />
+            <span>Analytics</span>
           </Link>
         </nav>
       </div>
