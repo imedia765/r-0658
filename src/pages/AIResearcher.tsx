@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Brain, Database, Search, Code, GitBranch } from 'lucide-react';
+import { Brain, Database, Search, Code, GitBranch, Link, File, Image, Plus } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useProject } from '@/contexts/ProjectContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AIResearcher = () => {
   const { toast } = useToast();
   const { selectedProject } = useProject();
+  const [newLink, setNewLink] = useState('');
 
   const projectTools = {
     'current': [
@@ -52,6 +55,14 @@ const AIResearcher = () => {
       title: "Analysis Started",
       description: `AI is analyzing ${selectedProject.name}'s codebase...`,
     });
+  };
+
+  const handleAddResource = (type: string) => {
+    toast({
+      title: "Resource Added",
+      description: `New ${type} added to ${selectedProject.name}'s knowledge base`,
+    });
+    setNewLink('');
   };
 
   const currentTools = projectTools[selectedProject.id as keyof typeof projectTools] || projectTools.current;
@@ -98,19 +109,75 @@ const AIResearcher = () => {
             <Database className="h-5 w-5 text-primary" />
             <h2 className="text-xl font-semibold">Project Knowledge Base</h2>
           </div>
-          <ScrollArea className="h-[300px]">
-            <div className="space-y-4">
-              {currentDatasets.map((dataset, index) => (
-                <div key={index} className="p-3 bg-accent/10 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{dataset.name}</span>
-                    <span className="text-sm text-muted-foreground">{dataset.size}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Last updated: {dataset.lastUpdated}</p>
+          <Tabs defaultValue="links" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-4">
+              <TabsTrigger value="links">Web Links</TabsTrigger>
+              <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="images">Images</TabsTrigger>
+            </TabsList>
+            <TabsContent value="links">
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter web link..."
+                    value={newLink}
+                    onChange={(e) => setNewLink(e.target.value)}
+                  />
+                  <Button onClick={() => handleAddResource('link')} size="icon">
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </ScrollArea>
+                <ScrollArea className="h-[200px]">
+                  {currentDatasets.map((dataset, index) => (
+                    <div key={index} className="flex items-center gap-2 p-2 hover:bg-accent/10 rounded-lg">
+                      <Link className="h-4 w-4 text-primary" />
+                      <span className="flex-1">{dataset.name}</span>
+                      <span className="text-sm text-muted-foreground">{dataset.lastUpdated}</span>
+                    </div>
+                  ))}
+                </ScrollArea>
+              </div>
+            </TabsContent>
+            <TabsContent value="files">
+              <div className="space-y-4">
+                <Button className="w-full" variant="outline">
+                  <File className="h-4 w-4 mr-2" />
+                  Upload File
+                </Button>
+                <ScrollArea className="h-[200px]">
+                  {currentDatasets.map((dataset, index) => (
+                    <div key={index} className="flex items-center gap-2 p-2 hover:bg-accent/10 rounded-lg">
+                      <File className="h-4 w-4 text-primary" />
+                      <span className="flex-1">{dataset.name}</span>
+                      <span className="text-sm text-muted-foreground">{dataset.size}</span>
+                    </div>
+                  ))}
+                </ScrollArea>
+              </div>
+            </TabsContent>
+            <TabsContent value="images">
+              <div className="space-y-4">
+                <Button className="w-full" variant="outline">
+                  <Image className="h-4 w-4 mr-2" />
+                  Upload Image
+                </Button>
+                <ScrollArea className="h-[200px]">
+                  <div className="grid grid-cols-2 gap-4">
+                    {currentDatasets.map((dataset, index) => (
+                      <div key={index} className="relative group aspect-square bg-accent/10 rounded-lg overflow-hidden">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Image className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <p className="text-xs truncate">{dataset.name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </TabsContent>
+          </Tabs>
         </Card>
       </div>
 
